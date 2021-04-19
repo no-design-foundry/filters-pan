@@ -3,6 +3,7 @@ import importlib
 
 from drawBot import *
 from drawBot import BezierPath as DBBP
+from drawBot import BezierPath
 from fontParts.world import *
 from marginPen import MarginPen
 
@@ -13,6 +14,7 @@ from slicerData import *
 __all__ = [
                 "writePathInGlyph",
                 "getSlicedGlyphPath",
+                "getSlicedPathPath",
                 "drawGlyph"
 ]
 def drawGlyph(glyph):
@@ -121,3 +123,34 @@ def getSlicedGlyphPath(glyph,
     glyphPath.rotate(-angle)
     return glyphPath
 
+
+
+def getSlicedPathPath(path, 
+                        steps=10, 
+                        thickness=10, 
+                        angle=0, 
+                        offset=0, 
+                        nosmall=10, 
+                        inner=0,
+                        DEBUG=False, 
+                        **kwargs
+                        ):
+    """?"""
+    #save()
+    pathPath = DBBP()
+    path = path.copy()
+    result = getSlicedPathData(path, steps=steps, thickness=thickness, angle=angle, offset=offset, nosmall=nosmall, inner=inner, **kwargs)
+    if DEBUG:return result
+    if result:
+        for r in result:
+            save()
+            #pathPath.rotate(-angle)
+            x,y,h = r
+            try:
+                eval(kwargs['shape'])(pathPath, x,y,h, thickness, **kwargs)
+            except:
+                pathPath.rect(x-thickness/2,y,thickness,h-y)
+            restore()
+    pathPath.rotate(-angle)
+    #restore()
+    return pathPath
