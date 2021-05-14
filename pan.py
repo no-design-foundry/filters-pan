@@ -5,12 +5,13 @@ import string
 from fontTools.ttLib import TTFont
 import defcon
 
-sys.path.append("/Users/thom/Documents/Code/extractor/Lib/")
+#sys.path.append("/Users/thom/Documents/Code/extractor/Lib/")
 import extractor
-
-sys.path.append('/Users/thom/Documents/Code/JAN/Pan/old_code/externalPan/')
-import slicerData
-import slicer
+import os
+print(os.getcwd())
+sys.path.append('../Pan')
+from panLib import panlib
+#from panLib import slicer
 
 from fontParts.world import *
 from drawBot import BezierPath
@@ -18,8 +19,8 @@ from drawBot import BezierPath
 import argparse
 import string
 
-importlib.reload(slicer)
-importlib.reload(slicerData)
+# importlib.reload(slicer)
+# importlib.reload(slicerData)
 
 
 def getPath(glyph):
@@ -95,6 +96,11 @@ def run():
     slicer.writePathInGlyph(q,panfont[gn])
     
   panfont.save("%s/Desktop/pan.ufo" % Path.home())
+
+def panr(ufo=None, **settings):
+  
+
+
 
 if __name__ == "__main__":
   run()
