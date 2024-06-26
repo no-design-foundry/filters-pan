@@ -406,6 +406,10 @@
       <string>arrowright</string>
       <string>arrowup</string>
       <string>em</string>
+      <string>m</string>
+      <string>w</string>
+      <string>g</string>
+      <string>x</string>
     </array>
     <key>public.postscriptNames</key>
     <dict>

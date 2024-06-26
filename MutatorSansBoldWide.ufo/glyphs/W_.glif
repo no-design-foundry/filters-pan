@@ -5,19 +5,19 @@
   <unicode hex="0077"/>
   <outline>
     <contour>
-      <point x="1349" y="800" type="line"/>
-      <point x="971" y="800" type="line"/>
-      <point x="909" y="355" type="line"/>
-      <point x="845" y="800" type="line"/>
-      <point x="570" y="800" type="line"/>
-      <point x="514" y="360" type="line"/>
-      <point x="453" y="800" type="line"/>
-      <point x="20" y="800" type="line"/>
-      <point x="176" y="0" type="line"/>
-      <point x="618" y="0" type="line"/>
-      <point x="659" y="278" type="line"/>
-      <point x="711" y="0" type="line"/>
-      <point x="1198" y="0" type="line"/>
+      <point x="-1177.7091384479218" y="1035.7616449822106" type="line"/>
+      <point x="-1060.9007145741934" y="676.2622818226416" type="line"/>
+      <point x="-618.5215111716027" y="754.8093403091914" type="line"/>
+      <point x="-1021.9645732829507" y="556.4291607694522" type="line"/>
+      <point x="-936.9848998298414" y="294.8886187882845" type="line"/>
+      <point x="-501.2150809749762" y="377.59693140073034" type="line"/>
+      <point x="-900.829911487973" y="183.6150063817513" type="line"/>
+      <point x="-767.025552923623" y="-228.19246517405082" type="line"/>
+      <point x="-54.3869910099899" y="167.3859468679473" type="line"/>
+      <point x="-190.97250252371447" y="587.7529270704059" type="line"/>
+      <point x="-468.03591082314034" y="540.8395198022732" type="line"/>
+      <point x="-219.71108300058415" y="676.2011830858553" type="line"/>
+      <point x="-370.20235926118113" y="1139.3657065215962" type="line"/>
     </contour>
   </outline>
   <lib>
