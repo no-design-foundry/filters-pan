@@ -1,0 +1,376 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="5.0">
+  <axes>
+    <axis tag="ANGL" name="angle" minimum="0" maximum="360" default="0">
+      <labelname xml:lang="en">Angle</labelname>
+    </axis>
+    <axis tag="STEP" name="step" minimum="20" maximum="100" default="20">
+      <labelname xml:lang="en">Step</labelname>
+      <labels ordering="1"/>
+    </axis>
+    <axis tag="THCK" name="thickness" minimum="20" maximum="80" default="20">
+      <labelname xml:lang="en">Thickness</labelname>
+      <labels ordering="2"/>
+    </axis>
+    <axis tag="FLIP" name="flipped_end" minimum="0" maximum="100" default="0">
+      <labelname xml:lang="en">Flipped End</labelname>
+      <labels ordering="3"/>
+    </axis>
+  </axes>
+  <rules>
+    <rule name="angle_0">
+      <conditionset>
+        <condition name="angle" minimum="0" maximum="45"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_0_step_20"/>
+      <sub name="z" with="z_angle_0_step_20"/>
+      <sub name="y" with="y_angle_0_step_20"/>
+      <sub name="x" with="x_angle_0_step_20"/>
+    </rule>
+    <rule name="angle_0">
+      <conditionset>
+        <condition name="angle" minimum="0" maximum="45"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_0_step_40"/>
+      <sub name="z" with="z_angle_0_step_40"/>
+      <sub name="y" with="y_angle_0_step_40"/>
+      <sub name="x" with="x_angle_0_step_40"/>
+    </rule>
+    <rule name="angle_0">
+      <conditionset>
+        <condition name="angle" minimum="0" maximum="45"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_0_step_60"/>
+      <sub name="z" with="z_angle_0_step_60"/>
+      <sub name="y" with="y_angle_0_step_60"/>
+      <sub name="x" with="x_angle_0_step_60"/>
+    </rule>
+    <rule name="angle_0">
+      <conditionset>
+        <condition name="angle" minimum="0" maximum="45"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_0_step_80"/>
+      <sub name="z" with="z_angle_0_step_80"/>
+      <sub name="y" with="y_angle_0_step_80"/>
+      <sub name="x" with="x_angle_0_step_80"/>
+    </rule>
+    <rule name="angle_45">
+      <conditionset>
+        <condition name="angle" minimum="45" maximum="90"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_45_step_20"/>
+      <sub name="z" with="z_angle_45_step_20"/>
+      <sub name="y" with="y_angle_45_step_20"/>
+      <sub name="x" with="x_angle_45_step_20"/>
+    </rule>
+    <rule name="angle_45">
+      <conditionset>
+        <condition name="angle" minimum="45" maximum="90"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_45_step_40"/>
+      <sub name="z" with="z_angle_45_step_40"/>
+      <sub name="y" with="y_angle_45_step_40"/>
+      <sub name="x" with="x_angle_45_step_40"/>
+    </rule>
+    <rule name="angle_45">
+      <conditionset>
+        <condition name="angle" minimum="45" maximum="90"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_45_step_60"/>
+      <sub name="z" with="z_angle_45_step_60"/>
+      <sub name="y" with="y_angle_45_step_60"/>
+      <sub name="x" with="x_angle_45_step_60"/>
+    </rule>
+    <rule name="angle_45">
+      <conditionset>
+        <condition name="angle" minimum="45" maximum="90"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_45_step_80"/>
+      <sub name="z" with="z_angle_45_step_80"/>
+      <sub name="y" with="y_angle_45_step_80"/>
+      <sub name="x" with="x_angle_45_step_80"/>
+    </rule>
+    <rule name="angle_90">
+      <conditionset>
+        <condition name="angle" minimum="90" maximum="135"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_90_step_20"/>
+      <sub name="z" with="z_angle_90_step_20"/>
+      <sub name="y" with="y_angle_90_step_20"/>
+      <sub name="x" with="x_angle_90_step_20"/>
+    </rule>
+    <rule name="angle_90">
+      <conditionset>
+        <condition name="angle" minimum="90" maximum="135"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_90_step_40"/>
+      <sub name="z" with="z_angle_90_step_40"/>
+      <sub name="y" with="y_angle_90_step_40"/>
+      <sub name="x" with="x_angle_90_step_40"/>
+    </rule>
+    <rule name="angle_90">
+      <conditionset>
+        <condition name="angle" minimum="90" maximum="135"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_90_step_60"/>
+      <sub name="z" with="z_angle_90_step_60"/>
+      <sub name="y" with="y_angle_90_step_60"/>
+      <sub name="x" with="x_angle_90_step_60"/>
+    </rule>
+    <rule name="angle_90">
+      <conditionset>
+        <condition name="angle" minimum="90" maximum="135"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_90_step_80"/>
+      <sub name="z" with="z_angle_90_step_80"/>
+      <sub name="y" with="y_angle_90_step_80"/>
+      <sub name="x" with="x_angle_90_step_80"/>
+    </rule>
+    <rule name="angle_135">
+      <conditionset>
+        <condition name="angle" minimum="135" maximum="180"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_135_step_20"/>
+      <sub name="z" with="z_angle_135_step_20"/>
+      <sub name="y" with="y_angle_135_step_20"/>
+      <sub name="x" with="x_angle_135_step_20"/>
+    </rule>
+    <rule name="angle_135">
+      <conditionset>
+        <condition name="angle" minimum="135" maximum="180"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_135_step_40"/>
+      <sub name="z" with="z_angle_135_step_40"/>
+      <sub name="y" with="y_angle_135_step_40"/>
+      <sub name="x" with="x_angle_135_step_40"/>
+    </rule>
+    <rule name="angle_135">
+      <conditionset>
+        <condition name="angle" minimum="135" maximum="180"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_135_step_60"/>
+      <sub name="z" with="z_angle_135_step_60"/>
+      <sub name="y" with="y_angle_135_step_60"/>
+      <sub name="x" with="x_angle_135_step_60"/>
+    </rule>
+    <rule name="angle_135">
+      <conditionset>
+        <condition name="angle" minimum="135" maximum="180"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_135_step_80"/>
+      <sub name="z" with="z_angle_135_step_80"/>
+      <sub name="y" with="y_angle_135_step_80"/>
+      <sub name="x" with="x_angle_135_step_80"/>
+    </rule>
+    <rule name="angle_180">
+      <conditionset>
+        <condition name="angle" minimum="180" maximum="225"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_180_step_20"/>
+      <sub name="z" with="z_angle_180_step_20"/>
+      <sub name="y" with="y_angle_180_step_20"/>
+      <sub name="x" with="x_angle_180_step_20"/>
+    </rule>
+    <rule name="angle_180">
+      <conditionset>
+        <condition name="angle" minimum="180" maximum="225"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_180_step_40"/>
+      <sub name="z" with="z_angle_180_step_40"/>
+      <sub name="y" with="y_angle_180_step_40"/>
+      <sub name="x" with="x_angle_180_step_40"/>
+    </rule>
+    <rule name="angle_180">
+      <conditionset>
+        <condition name="angle" minimum="180" maximum="225"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_180_step_60"/>
+      <sub name="z" with="z_angle_180_step_60"/>
+      <sub name="y" with="y_angle_180_step_60"/>
+      <sub name="x" with="x_angle_180_step_60"/>
+    </rule>
+    <rule name="angle_180">
+      <conditionset>
+        <condition name="angle" minimum="180" maximum="225"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_180_step_80"/>
+      <sub name="z" with="z_angle_180_step_80"/>
+      <sub name="y" with="y_angle_180_step_80"/>
+      <sub name="x" with="x_angle_180_step_80"/>
+    </rule>
+    <rule name="angle_225">
+      <conditionset>
+        <condition name="angle" minimum="225" maximum="270"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_225_step_20"/>
+      <sub name="z" with="z_angle_225_step_20"/>
+      <sub name="y" with="y_angle_225_step_20"/>
+      <sub name="x" with="x_angle_225_step_20"/>
+    </rule>
+    <rule name="angle_225">
+      <conditionset>
+        <condition name="angle" minimum="225" maximum="270"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_225_step_40"/>
+      <sub name="z" with="z_angle_225_step_40"/>
+      <sub name="y" with="y_angle_225_step_40"/>
+      <sub name="x" with="x_angle_225_step_40"/>
+    </rule>
+    <rule name="angle_225">
+      <conditionset>
+        <condition name="angle" minimum="225" maximum="270"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_225_step_60"/>
+      <sub name="z" with="z_angle_225_step_60"/>
+      <sub name="y" with="y_angle_225_step_60"/>
+      <sub name="x" with="x_angle_225_step_60"/>
+    </rule>
+    <rule name="angle_225">
+      <conditionset>
+        <condition name="angle" minimum="225" maximum="270"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_225_step_80"/>
+      <sub name="z" with="z_angle_225_step_80"/>
+      <sub name="y" with="y_angle_225_step_80"/>
+      <sub name="x" with="x_angle_225_step_80"/>
+    </rule>
+    <rule name="angle_270">
+      <conditionset>
+        <condition name="angle" minimum="270" maximum="315"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_270_step_20"/>
+      <sub name="z" with="z_angle_270_step_20"/>
+      <sub name="y" with="y_angle_270_step_20"/>
+      <sub name="x" with="x_angle_270_step_20"/>
+    </rule>
+    <rule name="angle_270">
+      <conditionset>
+        <condition name="angle" minimum="270" maximum="315"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_270_step_40"/>
+      <sub name="z" with="z_angle_270_step_40"/>
+      <sub name="y" with="y_angle_270_step_40"/>
+      <sub name="x" with="x_angle_270_step_40"/>
+    </rule>
+    <rule name="angle_270">
+      <conditionset>
+        <condition name="angle" minimum="270" maximum="315"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_270_step_60"/>
+      <sub name="z" with="z_angle_270_step_60"/>
+      <sub name="y" with="y_angle_270_step_60"/>
+      <sub name="x" with="x_angle_270_step_60"/>
+    </rule>
+    <rule name="angle_270">
+      <conditionset>
+        <condition name="angle" minimum="270" maximum="315"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_270_step_80"/>
+      <sub name="z" with="z_angle_270_step_80"/>
+      <sub name="y" with="y_angle_270_step_80"/>
+      <sub name="x" with="x_angle_270_step_80"/>
+    </rule>
+    <rule name="angle_315">
+      <conditionset>
+        <condition name="angle" minimum="315" maximum="360"/>
+        <condition name="step" minimum="20" maximum="60"/>
+      </conditionset>
+      <sub name="s" with="s_angle_315_step_20"/>
+      <sub name="z" with="z_angle_315_step_20"/>
+      <sub name="y" with="y_angle_315_step_20"/>
+      <sub name="x" with="x_angle_315_step_20"/>
+    </rule>
+    <rule name="angle_315">
+      <conditionset>
+        <condition name="angle" minimum="315" maximum="360"/>
+        <condition name="step" minimum="40" maximum="80"/>
+      </conditionset>
+      <sub name="s" with="s_angle_315_step_40"/>
+      <sub name="z" with="z_angle_315_step_40"/>
+      <sub name="y" with="y_angle_315_step_40"/>
+      <sub name="x" with="x_angle_315_step_40"/>
+    </rule>
+    <rule name="angle_315">
+      <conditionset>
+        <condition name="angle" minimum="315" maximum="360"/>
+        <condition name="step" minimum="60" maximum="100"/>
+      </conditionset>
+      <sub name="s" with="s_angle_315_step_60"/>
+      <sub name="z" with="z_angle_315_step_60"/>
+      <sub name="y" with="y_angle_315_step_60"/>
+      <sub name="x" with="x_angle_315_step_60"/>
+    </rule>
+    <rule name="angle_315">
+      <conditionset>
+        <condition name="angle" minimum="315" maximum="360"/>
+        <condition name="step" minimum="80" maximum="120"/>
+      </conditionset>
+      <sub name="s" with="s_angle_315_step_80"/>
+      <sub name="z" with="z_angle_315_step_80"/>
+      <sub name="y" with="y_angle_315_step_80"/>
+      <sub name="x" with="x_angle_315_step_80"/>
+    </rule>
+  </rules>
+  <sources>
+    <source filename="masters/0_False.ufoz" name="pan.ufo" familyname="Pan" stylename="Pan">
+      <location>
+        <dimension name="angle" xvalue="0"/>
+        <dimension name="step" xvalue="20"/>
+        <dimension name="thickness" xvalue="20"/>
+        <dimension name="flipped_end" xvalue="0"/>
+      </location>
+    </source>
+    <source filename="masters/1_False.ufoz" name="pan.ufo" familyname="Pan" stylename="Pan">
+      <location>
+        <dimension name="angle" xvalue="0"/>
+        <dimension name="step" xvalue="20"/>
+        <dimension name="thickness" xvalue="80"/>
+        <dimension name="flipped_end" xvalue="0"/>
+      </location>
+    </source>
+    <source filename="masters/0_True.ufoz" name="pan.ufo" familyname="Pan" stylename="Pan">
+      <location>
+        <dimension name="angle" xvalue="0"/>
+        <dimension name="step" xvalue="20"/>
+        <dimension name="thickness" xvalue="20"/>
+        <dimension name="flipped_end" xvalue="100"/>
+      </location>
+    </source>
+    <source filename="masters/1_True.ufoz" name="pan.ufo" familyname="Pan" stylename="Pan">
+      <location>
+        <dimension name="angle" xvalue="0"/>
+        <dimension name="step" xvalue="20"/>
+        <dimension name="thickness" xvalue="80"/>
+        <dimension name="flipped_end" xvalue="100"/>
+      </location>
+    </source>
+  </sources>
+</designspace>

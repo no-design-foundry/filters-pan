@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="y_angle_270_step_80" format="2">
+  <advance width="1210"/>
+  <outline>
+    <contour>
+      <point x="999.9999999999998" y="626.9330000000002" type="line"/>
+      <point x="1159.9999999999998" y="800.0000000000002" type="line"/>
+      <point x="999.9999999999998" y="800.0000000000002" type="line"/>
+      <point x="1159.9999999999998" y="626.9330000000002" type="line"/>
+    </contour>
+    <contour>
+      <point x="919.9999999999999" y="501.0670000000002" type="line"/>
+      <point x="1080.0" y="800.0000000000002" type="line"/>
+      <point x="919.9999999999999" y="800.0000000000002" type="line"/>
+      <point x="1080.0" y="501.0670000000002" type="line"/>
+    </contour>
+    <contour>
+      <point x="839.9999999999999" y="375.20000000000016" type="line"/>
+      <point x="999.9999999999999" y="800.0000000000001" type="line"/>
+      <point x="839.9999999999999" y="800.0000000000001" type="line"/>
+      <point x="999.9999999999999" y="375.20000000000016" type="line"/>
+    </contour>
+    <contour>
+      <point x="760.0" y="249.33300000000014" type="line"/>
+      <point x="919.9999999999999" y="800.0000000000001" type="line"/>
+      <point x="759.9999999999999" y="800.0000000000001" type="line"/>
+      <point x="920.0" y="249.3330000000001" type="line"/>
+    </contour>
+    <contour>
+      <point x="680.0" y="1.4940690949597708e-13" type="line"/>
+      <point x="839.9999999999999" y="645.2460000000001" type="line"/>
+      <point x="679.9999999999999" y="645.2460000000001" type="line"/>
+      <point x="840.0" y="1.200153863164406e-13" type="line"/>
+    </contour>
+    <contour>
+      <point x="600.0" y="1.3471114790620886e-13" type="line"/>
+      <point x="759.9999999999999" y="490.49200000000013" type="line"/>
+      <point x="599.9999999999999" y="490.49200000000013" type="line"/>
+      <point x="760.0" y="1.0531962472667238e-13" type="line"/>
+    </contour>
+    <contour>
+      <point x="520.0" y="1.2001538631644062e-13" type="line"/>
+      <point x="679.9999999999999" y="535.8210000000001" type="line"/>
+      <point x="519.9999999999999" y="535.8210000000001" type="line"/>
+      <point x="680.0" y="9.062386313690414e-14" type="line"/>
+    </contour>
+    <contour>
+      <point x="440.0" y="1.0531962472667237e-13" type="line"/>
+      <point x="599.9999999999999" y="676.7160000000001" type="line"/>
+      <point x="439.9999999999999" y="676.7160000000001" type="line"/>
+      <point x="600.0" y="7.592810154713589e-14" type="line"/>
+    </contour>
+    <contour>
+      <point x="360.0" y="9.062386313690414e-14" type="line"/>
+      <point x="519.9999999999998" y="800.0000000000001" type="line"/>
+      <point x="359.99999999999983" y="800.0000000000001" type="line"/>
+      <point x="520.0" y="6.123233995736766e-14" type="line"/>
+    </contour>
+    <contour>
+      <point x="279.99999999999994" y="265.06700000000006" type="line"/>
+      <point x="439.99999999999983" y="800.0000000000001" type="line"/>
+      <point x="279.99999999999983" y="800.0000000000001" type="line"/>
+      <point x="439.99999999999994" y="265.06700000000006" type="line"/>
+    </contour>
+    <contour>
+      <point x="199.99999999999994" y="390.93300000000005" type="line"/>
+      <point x="359.99999999999983" y="800.0" type="line"/>
+      <point x="199.99999999999983" y="800.0" type="line"/>
+      <point x="359.99999999999994" y="390.93300000000005" type="line"/>
+    </contour>
+    <contour>
+      <point x="119.99999999999991" y="516.8" type="line"/>
+      <point x="279.9999999999999" y="800.0" type="line"/>
+      <point x="119.99999999999986" y="800.0" type="line"/>
+      <point x="279.9999999999999" y="516.8" type="line"/>
+    </contour>
+    <contour>
+      <point x="39.999999999999886" y="642.667" type="line"/>
+      <point x="199.99999999999986" y="800.0" type="line"/>
+      <point x="39.99999999999986" y="800.0" type="line"/>
+      <point x="199.9999999999999" y="642.667" type="line"/>
+    </contour>
+  </outline>
+</glyph>

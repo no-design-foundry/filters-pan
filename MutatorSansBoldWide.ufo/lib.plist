@@ -70,10 +70,11 @@
     </dict>
     <key>com.schriftgestaltung.DisplayStrings</key>
     <array>
-      <string>GWGBA</string>
+      <string></string>
+      <string>xsy</string>
     </array>
     <key>com.schriftgestaltung.appVersion</key>
-    <string>3310</string>
+    <string>3311</string>
     <key>com.schriftgestaltung.disablesAutomaticAlignment</key>
     <false/>
     <key>com.schriftgestaltung.formatVersion</key>
@@ -410,6 +411,9 @@
       <string>w</string>
       <string>g</string>
       <string>x</string>
+      <string>s</string>
+      <string>y</string>
+      <string>z</string>
     </array>
     <key>public.postscriptNames</key>
     <dict>

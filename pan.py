@@ -3,11 +3,6 @@ from booleanOperations.booleanGlyph import BooleanGlyph
 from fontTools.misc.bezierTools import segmentSegmentIntersections
 from math import hypot, radians, cos, sin, atan2, pi, ceil
 
-
-THICKNESS=36
-ANGLE=-2043
-STEPS=85
-
 def interpolate(a, b, t=.5):
     return a + t * (b - a)
 
@@ -20,8 +15,12 @@ def rotate_point_around_axis(point, axis_coos, angle_degrees):
     angle_radians = radians(angle_degrees)
     
     # Translate point back to origin:
-    translated_x = point.x - axis_coos[0]
-    translated_y = point.y - axis_coos[1]
+    try:
+        translated_x = point.x - axis_coos[0]
+        translated_y = point.y - axis_coos[1]
+    except AttributeError:
+        translated_x = point[0] - axis_coos[0]
+        translated_y = point[1] - axis_coos[1]
     
     # Rotate point
     rotated_x = translated_x * cos(angle_radians) - translated_y * sin(angle_radians)
@@ -31,8 +30,11 @@ def rotate_point_around_axis(point, axis_coos, angle_degrees):
     final_x = rotated_x + axis_coos[0]
     final_y = rotated_y + axis_coos[1]
     
-    point.x = final_x
-    point.y = final_y
+    try:
+        point.x = final_x
+        point.y = final_y
+    except AttributeError:
+        return final_x, final_y
 
 
 
@@ -40,6 +42,16 @@ def rotate_glyph(glyph, angle):
     for contour in glyph:
         for p, point in enumerate(contour):
             rotate_point_around_axis(point, (0, 0), angle)
+
+def rotate_segments(segments, angle):
+    new_segments = []
+    for segment in segments:
+        new_segment = []
+        for point in segment:
+            new_point = rotate_point_around_axis(point, (0, 0), angle)
+            new_segment.append(new_point)
+        new_segments.append(new_segment)
+    return new_segments
         
 def create_segments(x, y):
 
@@ -57,25 +69,34 @@ def create_segments(x, y):
 
     return segments
     
-def line_shape(pen, point_a, point_b, thickness=THICKNESS):
+def line_shape(pen, point_a, point_b, thickness, flip_end=False):
     (x_a, y_a), (x_b, y_b) = point_a, point_b
     angle = atan2(point_b[1] - point_a[1], point_b[0] - point_a[0]) + pi/2
     x_offset, y_offset = cos(angle) * thickness, sin(angle) * thickness
     pen.moveTo((x_a + x_offset, y_a + y_offset))
-    pen.lineTo((x_b + x_offset, y_b + y_offset))
-    
+
+    next_point = (x_b + x_offset, y_b + y_offset)
     x_offset, y_offset = cos(angle + pi) * thickness, sin(angle + pi) * thickness
-    pen.lineTo((x_b + x_offset, y_b + y_offset))
+    next_next_point = (x_b + x_offset, y_b + y_offset)
+
+    if flip_end in [True, None]:
+        pen.lineTo(next_next_point)
+        pen.lineTo(next_point)
+    else:
+        pen.lineTo(next_point)
+        pen.lineTo(next_next_point)
+
+
     pen.lineTo((x_a + x_offset, y_a + y_offset))
     pen.closePath()
 
 def triangle_shape(pen, point_a, point_b, thickness):
     (x_a, y_a), (x_b, y_b) = point_a, point_b
     angle = atan2(point_b[1] - point_a[1], point_b[0] - point_a[0]) + pi/2
-    x_offset, y_offset = cos(angle) * THICKNESS, sin(angle) * THICKNESS
+    x_offset, y_offset = cos(angle) * thickness, sin(angle) * thickness
     pen.moveTo((x_a + x_offset, y_a + y_offset))
     
-    x_offset, y_offset = cos(angle + pi) * THICKNESS, sin(angle + pi) * THICKNESS
+    x_offset, y_offset = cos(angle + pi) * thickness, sin(angle + pi) * thickness
     pen.lineTo((x_a + x_offset, y_a + y_offset))
     
     pen.lineTo((x_b, y_b))
@@ -91,18 +112,19 @@ def circle(pen, center, radius, tension=1):
     pen.closePath()
 
 def dumbbell_shape(pen, point_a, point_b, thickness):
-    circle(pen, point_a, 20)
-    circle(pen, point_b, 20)
-    line_shape(pen, point_a, point_b, 4)
+    circle(pen, point_a, thickness)
+    circle(pen, point_b, thickness)
+    line_shape(pen, point_a, point_b, thickness/5)
 
-def pan(glyph, shape_func):
+def get_pan_slices(glyph, step):
     contour_points = []
     for contour in glyph:
         for point in contour:
             contour_points.append((point.x, point.y))
-    bounds = glyph.bounds  
-    for i in range(0, abs(ceil(bounds[1] - bounds[3])), STEPS):
-        line_y = bounds[1] + i
+    bounds = glyph.bounds
+    return_value = []
+    for i in range(0, abs(ceil(bounds[1] - bounds[3])) + 100, step):
+        line_y = -50 + bounds[1] + i
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
@@ -120,13 +142,12 @@ def pan(glyph, shape_func):
 
         output_intersections = sorted(output_intersections, key=lambda x:x[0])
         points_are_inside = []
-        
-        
+
         if len(output_intersections) % 2 == 0:
             for i in range(0, len(output_intersections), 2):
                 point_from = output_intersections[i]
                 point_to = output_intersections[i+1]
-                shape_func(point_from, point_to)
+                return_value.append((point_from, point_to))
 
         else:
             points_are_inside = []
@@ -137,7 +158,7 @@ def pan(glyph, shape_func):
                 middle = interpolate_point(prev_point, point, .5)
                 if point in contour_points:
                     point_index = contour_points.index(point)
-                    if point in contour_points and (contour_points[point_index - 1] == prev_point or contour_points[point_index + 1] == prev_point):
+                    if point in contour_points and (contour_points[point_index - 1] == prev_point or contour_points[(point_index + 1) % len(contour_points)] == prev_point):
                         point_is_inside = True
                     else:
                         point_is_inside = glyph.pointInside(middle)
@@ -147,38 +168,49 @@ def pan(glyph, shape_func):
                 
             if len(points_are_inside) == len(output_intersections):
                 for segment in create_segments(output_intersections, points_are_inside):
-                    shape_func(segment[0], segment[-1])
+                    return_value.append((segment[0], segment[-1]))
+    return return_value
+
+def pan_glyph(output_glyph, slices, thickness, shape, min_length=0, flip_end=False):
+    output_pen = output_glyph.getPen()
+    def shape_func(pt_from, pt_to, thickness, **kwargs):
+        length = hypot(pt_to[1]-pt_from[1], pt_to[0]-pt_from[0])
+        if length > min_length:
+            if shape == "line":
+                line_shape(output_pen, pt_from, pt_to, thickness, flip_end, **kwargs)
+            elif shape == "triangle":
+                triangle_shape(output_pen, pt_from, pt_to, thickness, **kwargs)
+            elif shape == "dumbbell":
+                dumbbell_shape(output_pen, pt_from, pt_to, thickness, **kwargs)
+            else:
+                raise NotImplementedError
+
+    for from_point, to_point in slices:
+        shape_func(from_point, to_point, thickness)
+    #glyph.draw(input_glyph.getPen())
 
 
 if __name__ == "__main__":
-    font = Font("MutatorSansBoldWide.ufo")
-    from copy import deepcopy
-    for glyph_name in ["X"]:
-        glyph_ = font[glyph_name]
-        glyph_.unicodes = []
-        glyph = Glyph()
-        glyph_.draw(glyph.getPen())
-        removed_overlap = BooleanGlyph(glyph) 
-        removed_overlap = removed_overlap.xor(BooleanGlyph())
-        removed_overlap.draw(glyph.getPen())
 
-        rotate_glyph(glyph, ANGLE)
-
-        output_glyph = font.newGlyph(glyph_name.lower())
-        output_glyph.unicode = ord(glyph_name.lower())
-        output_glyph.clear()
-        output_glyph.width = glyph.width
-        output_pen = output_glyph.getPen()
-
-        def shape_func(pt_from, pt_to, *args, **kwargs):
-            length = hypot(pt_to[1]-pt_from[1], pt_to[0]-pt_from[0])
-            if length > THICKNESS:
-                triangle_shape(output_pen, pt_from, pt_to, THICKNESS, **kwargs)
-
-        pan(glyph, shape_func)
-        rotate_glyph(output_glyph, -ANGLE)
-
-    
-    font.save()
+    for flip_end in [False, True]:
+        for t, thickness in enumerate([20, 80]):
+            font = Font("MutatorSansBoldWide.ufo")  
+            # for glyph_name in ["S", "X", "Y", "Z"]:        
+            for glyph_name in "SXYZ":        
+                for angle in [0, 45, 90, 135, 180, 225, 270, 315]:
+                    for step in range(20, 100, 20):
+                        temp_glyph = Glyph()
+                        glyph = font[glyph_name]
+                        glyph.draw(temp_glyph.getPen())
+                        removed_overlap = BooleanGlyph(temp_glyph).union(BooleanGlyph())
+                        temp_glyph.clearContours()
+                        removed_overlap.draw(temp_glyph.getPen())
+                        rotate_glyph(temp_glyph, angle)
+                        slices = get_pan_slices(temp_glyph, step)
+                        slices = rotate_segments(slices, -angle)
+                        output_glyph = font.newGlyph(glyph_name.lower() + "_angle_" + str(angle) + "_step_" + str(step))
+                        output_glyph.width = glyph.width
+                        pan_glyph(output_glyph, slices, thickness, "line", min_length=80, flip_end=flip_end)
+            font.save(f"masters/{t}_{str(flip_end)}.ufoz")
 
         
