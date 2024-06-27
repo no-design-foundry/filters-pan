@@ -12,8 +12,6 @@
     <integer>-200</integer>
     <key>familyName</key>
     <string>MutatorMathTest</string>
-    <key>guidelines</key>
-    <array/>
     <key>italicAngle</key>
     <integer>0</integer>
     <key>openTypeHeadCreated</key>
@@ -28,24 +26,12 @@
     <integer>400</integer>
     <key>openTypeOS2WidthClass</key>
     <integer>5</integer>
-    <key>postscriptBlueValues</key>
-    <array/>
     <key>postscriptDefaultWidthX</key>
     <integer>500</integer>
-    <key>postscriptFamilyBlues</key>
-    <array/>
-    <key>postscriptFamilyOtherBlues</key>
-    <array/>
     <key>postscriptFontName</key>
     <string>MutatorMathTest-BoldWide</string>
-    <key>postscriptOtherBlues</key>
-    <array/>
     <key>postscriptSlantAngle</key>
     <real>0.0</real>
-    <key>postscriptStemSnapH</key>
-    <array/>
-    <key>postscriptStemSnapV</key>
-    <array/>
     <key>postscriptWindowsCharacterSet</key>
     <integer>1</integer>
     <key>styleMapFamilyName</key>

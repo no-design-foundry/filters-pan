@@ -44,12 +44,13 @@ doc.addAxis(axis)
 
 glyphs = "SZYX".lower()
 
-for angle in range(0, 360, 45):
-    for step in range(20, 100, 20):
+for angle in range(45, 360, 45):
+    for step in range(40, 100, 20):
         rule = RuleDescriptor()
         rule.name = f"angle_{angle}"
         rule.conditionSets.append([dict(name="angle", minimum=angle, maximum=angle+45), dict(name="step", minimum=step, maximum=step + 40)])
         for glyph in glyphs:
+            
             rule.subs.append((glyph, f"{glyph}_angle_{angle}_step_{step}"))
         doc.addRule(rule)
 
