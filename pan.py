@@ -192,16 +192,16 @@ def pan_glyph(output_glyph, slices, thickness, shape, min_length=0, flip_end=Fal
 
 if __name__ == "__main__":
     input_font = Font("MutatorSansBoldWide.ufo")
-    font_20 = Font()
-    font_20.info.unitsPerEm = input_font.info.unitsPerEm
-    font_80 = Font()
-    font_80.info.unitsPerEm = input_font.info.unitsPerEm
-    masters = {
-        20: font_20,
-        80: font_80
-    }
     for flip_end in [False, True]:
-        for glyph_name in "SXYZ":        
+        font_20 = Font()
+        font_20.info.unitsPerEm = input_font.info.unitsPerEm
+        font_80 = Font()
+        font_80.info.unitsPerEm = input_font.info.unitsPerEm
+        masters = {
+            20: font_20,
+            80: font_80
+        }
+        for glyph_name in "S":        
             for angle in [0, 45, 90, 135, 180, 225, 270, 315]:
                 for step in range(20, 100, 20):
                     temp_glyph = Glyph()
@@ -215,14 +215,18 @@ if __name__ == "__main__":
                     slices = rotate_segments(slices, -angle)
                     for t, thickness in enumerate(masters.keys()):
                         font = masters[thickness]
-                        if angle == 0 and flip_end == False and t == 0:
-                            output_glyph = font.newGlyph(glyph_name.lower())
+                        if angle == 0 and step == 20:
+                            output_glyph = font.newGlyph(glyph_name)
                             output_glyph.unicodes = glyph.unicodes
                         else: 
-                            output_glyph = font.newGlyph(glyph_name.lower() + "_angle_" + str(angle) + "_step_" + str(step))
+                            output_glyph = font.newGlyph(glyph_name + "_angle_" + str(angle) + "_step_" + str(step))
+                        
+                        
                         output_glyph.width = glyph.width
                         pan_glyph(output_glyph, slices, thickness, "line", min_length=80, flip_end=flip_end)
         for t, font in enumerate(masters.values()):
+            # s = font.newGlyph("S")
+            # s.unicode = ord("S")
             font.save(f"masters/{t}_{str(flip_end)}.ufoz")
 
         
