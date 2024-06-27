@@ -134,8 +134,8 @@ def get_pan_slices(glyph, step):
                 segment_points = [last_point, *segment]
                 segment_points = [(point.x, point.y) for point in segment_points]
                 intersections = segmentSegmentIntersections(line_points, segment_points)
-                if segment_points[0][-1] == i and segment_points[-1][-1] == i:
-                    output_intersections.add(segment_points[0])
+                # if segment_points[0][-1] == i and segment_points[-1][-1] == i:
+                    # output_intersections.add(segment_points[0])
                 for intersection in intersections:
                     if 0 < intersection.t1 <= 1 and 0 <= intersection.t2 <= 1:
                         output_intersections.add(tuple(map(lambda x:round(x, 3), intersection.pt)))
@@ -195,7 +195,6 @@ if __name__ == "__main__":
     for flip_end in [False, True]:
         for t, thickness in enumerate([20, 80]):
             font = Font("MutatorSansBoldWide.ufo")  
-            # for glyph_name in ["S", "X", "Y", "Z"]:        
             for glyph_name in "SXYZ":        
                 for angle in [0, 45, 90, 135, 180, 225, 270, 315]:
                     for step in range(20, 100, 20):

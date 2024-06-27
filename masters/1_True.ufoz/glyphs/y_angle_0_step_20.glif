@@ -315,16 +315,16 @@
       <point x="803.814" y="650.0" type="line"/>
     </contour>
     <contour>
-      <point x="41.81355436938793" y="829.3767595804468" type="line"/>
-      <point x="459.96644563061204" y="720.6232404195532" type="line"/>
-      <point x="440.03355436938796" y="879.3767595804468" type="line"/>
-      <point x="61.74644563061206" y="670.6232404195532" type="line"/>
+      <point x="51.78000000000001" y="830.0" type="line"/>
+      <point x="478.39" y="670.0" type="line"/>
+      <point x="478.39" y="830.0" type="line"/>
+      <point x="51.77999999999999" y="670.0" type="line"/>
     </contour>
     <contour>
-      <point x="478.39" y="830.0" type="line"/>
-      <point x="814.153" y="670.0" type="line"/>
       <point x="814.153" y="830.0" type="line"/>
-      <point x="478.39" y="670.0" type="line"/>
+      <point x="1158.22" y="670.0" type="line"/>
+      <point x="1158.22" y="830.0" type="line"/>
+      <point x="814.153" y="670.0" type="line"/>
     </contour>
     <contour>
       <point x="39.068000000000005" y="850.0" type="line"/>

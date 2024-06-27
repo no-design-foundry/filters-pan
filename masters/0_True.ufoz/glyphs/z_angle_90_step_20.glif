@@ -626,11 +626,5 @@
       <point x="1230.0" y="7.409113134841487e-14" type="line"/>
       <point x="1190.0" y="280.00000000000006" type="line"/>
     </contour>
-    <contour>
-      <point x="1240.0" y="520.0" type="line"/>
-      <point x="1200.0" y="2.4492935982947065e-15" type="line"/>
-      <point x="1240.0" y="0.0" type="line"/>
-      <point x="1200.0" y="520.0" type="line"/>
-    </contour>
   </outline>
 </glyph>
