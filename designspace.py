@@ -14,9 +14,9 @@ doc.addAxis(axis)
 
 axis = AxisDescriptor()
 axis.name="step"
-axis.minimum=20
+axis.minimum=40
 axis.maximum=100
-axis.default=20
+axis.default=40
 axis.tag="STEP"
 axis.labelNames={"en": "Step"}
 axis.axisOrdering=1
@@ -42,11 +42,11 @@ axis.labelNames={"en": "Flipped End"}
 axis.axisOrdering=3
 doc.addAxis(axis)
 
-glyphs = "S"
+glyphs = "SXYZ"
 
 for angle in range(0, 360, 45):
-    for step in range(20, 100, 20):
-        if angle == 0 and step == 20:
+    for step in range(40, 100, 20):
+        if angle == 0 and step == 40:
             pass
         else:
             rule = RuleDescriptor()
@@ -61,7 +61,7 @@ source.path = "masters/0_False.ufoz"
 source.name = "pan.ufo"
 source.familyName = "Pan"
 source.styleName = "Pan"
-source.location = dict(angle=0, step=20, thickness=20, flipped_end=0)
+source.location = dict(angle=0, step=40, thickness=20, flipped_end=0)
 doc.addSource(source)
 
 source = SourceDescriptor()
@@ -69,7 +69,7 @@ source.path = "masters/1_False.ufoz"
 source.name = "pan.ufo"
 source.familyName = "Pan"
 source.styleName = "Pan"
-source.location = dict(angle=0, step=20, thickness=80, flipped_end=0)
+source.location = dict(angle=0, step=40, thickness=80, flipped_end=0)
 doc.addSource(source)
 
 source = SourceDescriptor()
@@ -77,7 +77,7 @@ source.path = "masters/0_True.ufoz"
 source.name = "pan.ufo"
 source.familyName = "Pan"
 source.styleName = "Pan"
-source.location = dict(angle=0, step=20, thickness=20, flipped_end=100)
+source.location = dict(angle=0, step=40, thickness=20, flipped_end=100)
 doc.addSource(source)
 
 source = SourceDescriptor()
@@ -85,7 +85,7 @@ source.path = "masters/1_True.ufoz"
 source.name = "pan.ufo"
 source.familyName = "Pan"
 source.styleName = "Pan"
-source.location = dict(angle=0, step=20, thickness=80, flipped_end=100)
+source.location = dict(angle=0, step=40, thickness=80, flipped_end=100)
 doc.addSource(source)
 
 doc.write("designspace.designspace")

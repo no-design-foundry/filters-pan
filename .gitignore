@@ -1,2 +1,4 @@
 *.ufo
 *.ufoz
+.venv
+__pycache__
