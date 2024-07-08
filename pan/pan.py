@@ -6,6 +6,7 @@ from defcon.objects.base import BaseObject
 from decimal import Decimal
 from ufo2ft import compileVariableTTF
 from .designspace import make_designspace
+from pathops.operations import union as skia_union
 BaseObject.addObserver = lambda *args,**kwargs:None
 BaseObject.postNotification = lambda *args,**kwargs:None
 BaseObject.removeObserver = lambda *args,**kwargs:None
@@ -137,7 +138,7 @@ def get_pan_slices(glyph, step):
         return return_value
 
     for i in range(0, abs(ceil(bounds[1] - bounds[3])) + 100, step):
-        line_y = -50 + bounds[1] + i
+        line_y = -50 + ceil(bounds[1]/step)*step + i
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
