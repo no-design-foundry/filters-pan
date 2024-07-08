@@ -2,3 +2,4 @@
 *.ufoz
 .venv
 __pycache__
+*.egg-info

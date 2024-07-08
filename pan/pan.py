@@ -4,6 +4,8 @@ from fontTools.misc.bezierTools import segmentSegmentIntersections
 from math import hypot, radians, cos, sin, atan2, pi, ceil
 from defcon.objects.base import BaseObject
 from decimal import Decimal
+from ufo2ft import compileVariableTTF
+from .designspace import make_designspace
 BaseObject.addObserver = lambda *args,**kwargs:None
 BaseObject.postNotification = lambda *args,**kwargs:None
 BaseObject.removeObserver = lambda *args,**kwargs:None
@@ -131,6 +133,8 @@ def get_pan_slices(glyph, step):
             contour_points.append((point.x, point.y))
     bounds = glyph.bounds
     return_value = []
+    if bounds is None:
+        return return_value
 
     for i in range(0, abs(ceil(bounds[1] - bounds[3])) + 100, step):
         line_y = -50 + bounds[1] + i
@@ -198,15 +202,10 @@ def pan_glyph(output_glyph, slices, thickness, shape, min_length=0, flip_end=Fal
         shape_func(from_point, to_point, thickness)
     #glyph.draw(input_glyph.getPen())
 
-def main():
+def pan(input_font, glyph_names_to_process=None):
     Font._get_dispatcher = lambda x:None
     Glyph._get_dispatcher = lambda x:None
     Point._get_dispatcher = lambda x:None
-    
-    input_font = Font("font.ufo")
-
-    from datetime import datetime
-    total_total = datetime.now()
 
     font_20 = Font()
     font_80 = Font()
@@ -218,7 +217,7 @@ def main():
         5: [font_20, font_20_flipped],
         80: [font_80, font_80_flipped]
     }
-    for glyph_name in "SXYZ":        
+    for glyph_name in glyph_names_to_process:        
         glyph_removed_overlap = Glyph()
         glyph = input_font[glyph_name]
         BooleanGlyph(glyph).union(BooleanGlyph()).draw(glyph_removed_overlap.getPen())
@@ -245,20 +244,16 @@ def main():
                                 output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle) + "_step_" + str(step))
                             output_glyph.width = glyph.width
                             pan_glyph(output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices], thickness, "line", min_length=80, flip_end=flip_end)
-        
-    
-    print((datetime.now() - total_total).total_seconds())
-
-    for t, (master, master_flipped) in enumerate(masters.values()):
-        master.save(f"masters/{t}_False.ufoz")
-        master_flipped.save(f"masters/{t}_True.ufoz")
+    designspace = make_designspace(masters, glyph_names_to_process)
+    return compileVariableTTF(designspace)
 
 if __name__ == "__main__":
     import cProfile, pstats
+    input_font = Font("font.ufo")
 
     # profiler = cProfile.Profile()
     # profiler.enable()
-    main()
+    pan(input_font)
     # profiler.disable()
     # # stats = pstats.Stats(profiler).strip_dirs().sort_stats('tottime')  # sort by cumulative time spent in function
     # stats = pstats.Stats(profiler).sort_stats('tottime')  # sort by cumulative time spent in function
