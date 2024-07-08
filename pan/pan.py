@@ -2,16 +2,13 @@ from defcon import Font, Glyph, Point, Contour
 from booleanOperations.booleanGlyph import BooleanGlyph
 from fontTools.misc.bezierTools import segmentSegmentIntersections
 from math import hypot, radians, cos, sin, atan2, pi, ceil
-from defcon.objects.base import BaseObject
+from fontTools.pens.qu2cuPen import Qu2CuPen
 from decimal import Decimal
 from ufo2ft import compileVariableTTF
 from .designspace import make_designspace
 from pathops.operations import union as skia_union
-BaseObject.addObserver = lambda *args,**kwargs:None
-BaseObject.postNotification = lambda *args,**kwargs:None
-BaseObject.removeObserver = lambda *args,**kwargs:None
-BaseObject.beginSelfNotificationObservation = lambda *args,**kwargs:None
-BaseObject.endSelfContourNotificationObservation = lambda *args,**kwargs:None
+from fontPens.flattenPen import FlattenPen
+
 
 
 def interpolate(a, b, t=.5):
@@ -138,7 +135,7 @@ def get_pan_slices(glyph, step):
         return return_value
 
     for i in range(0, abs(ceil(bounds[1] - bounds[3])) + 100, step):
-        line_y = -50 + ceil(bounds[1]/step)*step + i
+        line_y = -50 + ceil(bounds[1]/step)*step + i + .5
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
@@ -149,7 +146,7 @@ def get_pan_slices(glyph, step):
                 segment_points = [(point.x, point.y) for point in segment_points]
                 intersections = segmentSegmentIntersections(line_points, segment_points)
                 for intersection in intersections:
-                    if 0 <= intersection.t1 <= 1 and 0 <= intersection.t2 <= 1:
+                    if 0 < intersection.t1 < 1 and 0 < intersection.t2 < 1:
                         output_intersections.add(tuple(map(lambda x:round(x, 3), intersection.pt)))
 
         output_intersections = sorted(output_intersections, key=lambda x:x[0])
@@ -203,7 +200,7 @@ def pan_glyph(output_glyph, slices, thickness, shape, min_length=0, flip_end=Fal
         shape_func(from_point, to_point, thickness)
     #glyph.draw(input_glyph.getPen())
 
-def pan(input_font, glyph_names_to_process=None):
+def pan(input_font, glyph_names_to_process=None, is_quadratic=False):
     Font._get_dispatcher = lambda x:None
     Glyph._get_dispatcher = lambda x:None
     Point._get_dispatcher = lambda x:None
@@ -221,7 +218,18 @@ def pan(input_font, glyph_names_to_process=None):
     for glyph_name in glyph_names_to_process:        
         glyph_removed_overlap = Glyph()
         glyph = input_font[glyph_name]
+        if is_quadratic:
+            flattened = Glyph()
+            flatten_pen = FlattenPen(flattened.getPen(), approximateSegmentLength=40, filterDoubles=True)
+            glyph.draw(flatten_pen)
+            glyph.clearContours()
+            flattened.draw(glyph.getPen())
+        
         BooleanGlyph(glyph).union(BooleanGlyph()).draw(glyph_removed_overlap.getPen())
+        for contour in glyph_removed_overlap:
+            for point in contour:
+                point.x = round(point.x)
+                point.y = round(point.y)
         
         for angle in [0, 45, 90, 135]:
             for step in range(40, 100, 20):
@@ -246,6 +254,7 @@ def pan(input_font, glyph_names_to_process=None):
                             output_glyph.width = glyph.width
                             pan_glyph(output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices], thickness, "line", min_length=80, flip_end=flip_end)
     designspace = make_designspace(masters, glyph_names_to_process)
+    input_font.save("test.ufo")
     return compileVariableTTF(designspace)
 
 if __name__ == "__main__":
