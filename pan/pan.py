@@ -134,8 +134,8 @@ def get_pan_slices(glyph, step):
     if bounds is None:
         return return_value
 
-    for i in range(0, abs(ceil(bounds[1] - bounds[3])) + 100, step):
-        line_y = -50 + ceil(bounds[1]/step)*step + i + .5
+    for i in range(0, abs(ceil(bounds[1] - bounds[3])) + step * 2, step):
+        line_y = -50 + ceil(bounds[1]/step)*step + i
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
@@ -145,8 +145,12 @@ def get_pan_slices(glyph, step):
                 segment_points = [last_point, *segment]
                 segment_points = [(point.x, point.y) for point in segment_points]
                 intersections = segmentSegmentIntersections(line_points, segment_points)
+                if segment_points[0][-1] == line_y:
+                    output_intersections.add(segment_points[0])
+                if segment_points[-1][-1] == line_y:
+                    output_intersections.add(segment_points[-1])
                 for intersection in intersections:
-                    if 0 < intersection.t1 < 1 and 0 < intersection.t2 < 1:
+                    if 0 <= intersection.t1 <= 1 and 0 <= intersection.t2 <= 1:
                         output_intersections.add(tuple(map(lambda x:round(x, 3), intersection.pt)))
 
         output_intersections = sorted(output_intersections, key=lambda x:x[0])
@@ -178,6 +182,8 @@ def get_pan_slices(glyph, step):
             if len(points_are_inside) == len(output_intersections):
                 for segment in create_segments(output_intersections, points_are_inside):
                     return_value.append((segment[0], segment[-1]))
+            else:
+                return_value.append((output_intersections[0], output_intersections[-1]))
     return return_value
 
 
