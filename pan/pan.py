@@ -1,7 +1,7 @@
 from defcon import Font, Glyph, Point, Contour
 from booleanOperations.booleanGlyph import BooleanGlyph
 from fontTools.misc.bezierTools import segmentSegmentIntersections
-from math import hypot, radians, cos, sin, atan2, pi, ceil
+from math import hypot, radians, cos, sin, atan2, pi, ceil, degrees
 from fontTools.pens.qu2cuPen import Qu2CuPen
 from decimal import Decimal
 from ufo2ft import compileVariableTTF
@@ -12,7 +12,7 @@ except:
 
 from pathops.operations import union as skia_union
 from fontPens.flattenPen import FlattenPen
-
+from fontTools.pens.pointPen import BasePointToSegmentPen
 
 def interpolate(a, b, t=.5):
     return a + t * (b - a)
@@ -85,18 +85,13 @@ def line_shape(output_glyph_contours, point_a, point_b, thickness, flip_end=Fals
     second_point = (x_b + x_offset, y_b + y_offset)
     third_point = (x_b - x_offset, y_b - y_offset)
     fourth_point = (x_a - x_offset, y_a - y_offset)
-    point_objects = []
+    point_objects = [None] * 4
 
-    point_objects.append(Point(first_point, segmentType="line"))
+    point_objects[0] = Point(first_point, segmentType="line")
+    point_objects[1 if flip_end in {True, None} else 2] = Point(third_point, segmentType="line")
+    point_objects[2 if flip_end in {True, None} else 1] = Point(second_point, segmentType="line")
+    point_objects[3] = Point(fourth_point, segmentType="line")
 
-    if flip_end in [True, None]:
-        point_objects.append(Point(third_point, segmentType="line"))
-        point_objects.append(Point(second_point, segmentType="line"))
-    else:
-        point_objects.append(Point(second_point, segmentType="line"))
-        point_objects.append(Point(third_point, segmentType="line"))
-
-    point_objects.append(Point(fourth_point, segmentType="line"))
     contour = Contour()
     contour._points = point_objects
     output_glyph_contours.append(contour)
@@ -186,16 +181,13 @@ def pan(input_font, glyph_names_to_process, is_quadratic=False):
         5: [font_20, font_20_flipped],
         80: [font_80, font_80_flipped]
     }
+    glyph_removed_overlap = Glyph()
     for glyph_name in glyph_names_to_process:        
-        glyph_removed_overlap = Glyph()
         glyph = input_font[glyph_name]
-        # if is_quadratic:
         flattened = BooleanGlyph()
         flatten_pen = FlattenPen(flattened.getPen(), approximateSegmentLength=50)
         glyph.draw(flatten_pen)
-        
-        # skia_union(glyph, glyph_removed_overlap.getPen())
-        flattened.union(BooleanGlyph()).draw(glyph_removed_overlap.getPen())
+        skia_union(flattened, glyph_removed_overlap.getPen())
 
         
         for angle in [0, 45, 90, 135]:
@@ -220,6 +212,7 @@ def pan(input_font, glyph_names_to_process, is_quadratic=False):
                                 output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle) + "_step_" + str(step))
                             output_glyph.width = glyph.width
                             pan_glyph(output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices], thickness, min_length=1, flip_end=flip_end)
+        glyph_removed_overlap._contours = []
     designspace = make_designspace(masters, glyph_names_to_process)
     return compileVariableTTF(designspace, optimizeGvar=False)
 
@@ -236,7 +229,7 @@ if __name__ == "__main__":
     BaseObject.dirty = lambda : None
     BaseObject.dispatcher = None
 
-    PROFILE = not True
+    PROFILE = True
 
     input_font = Font("../font.ufo")
     if PROFILE:
