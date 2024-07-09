@@ -170,7 +170,7 @@ def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
     for from_point, to_point in slices:
         shape_func(from_point, to_point, thickness)
 
-def pan(input_font, glyph_names_to_process, is_quadratic=False):
+def pan(input_font, glyph_names_to_process, scale_factor, min_length):
     font_20 = Font()
     font_80 = Font()
     font_20_flipped = Font()
@@ -195,7 +195,7 @@ def pan(input_font, glyph_names_to_process, is_quadratic=False):
                 output_glyph = Glyph()
                 glyph_removed_overlap.draw(output_glyph.getPen())
                 rotate_glyph(output_glyph, angle)
-                slices = get_pan_slices(output_glyph, step)
+                slices = get_pan_slices(output_glyph, int(step * scale_factor))
                 slices = rotate_segments(slices, -angle)
                 for half_circle_switch in [False, True]:
                     if half_circle_switch:
@@ -211,7 +211,7 @@ def pan(input_font, glyph_names_to_process, is_quadratic=False):
                             else:
                                 output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle) + "_step_" + str(step))
                             output_glyph.width = glyph.width
-                            pan_glyph(output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices], thickness, min_length=1, flip_end=flip_end)
+                            pan_glyph(output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices], thickness, min_length=min_length, flip_end=flip_end)
         glyph_removed_overlap._contours = []
     designspace = make_designspace(masters, glyph_names_to_process)
     return compileVariableTTF(designspace, optimizeGvar=False)
