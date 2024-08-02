@@ -1,7 +1,9 @@
-# from defcon import Glyph, Point, Contour
+from defcon import Font, Glyph, Point, Contour
 from booleanOperations.booleanGlyph import BooleanGlyph
 from fontTools.misc.bezierTools import segmentSegmentIntersections
-from math import hypot, radians, cos, sin, atan2, pi, ceil
+from math import hypot, radians, cos, sin, atan2, pi, ceil, degrees
+from fontTools.pens.qu2cuPen import Qu2CuPen
+from decimal import Decimal
 from ufo2ft import compileVariableTTF
 try:
     from .designspace import make_designspace
@@ -10,24 +12,11 @@ except:
 
 from pathops.operations import union as skia_union
 from fontPens.flattenPen import FlattenPen
-from ufoLib2.objects.contour import Contour
-from ufoLib2.objects.glyph import Glyph
-from ufoLib2.objects.point import Point
-from ufoLib2.objects.font import Font
-
-from fontTools.pens.pointInsidePen import PointInsidePen
-
-
-def pointInside(self, coordinates, evenOdd=False):
-    (x, y) = coordinates
-    pen = PointInsidePen(glyphSet=None, testPoint=(x, y), evenOdd=evenOdd)
-    self.draw(pen)
-    return pen.getResult()
-
-setattr(Glyph, "pointInside", pointInside)
+from fontTools.pens.pointPen import BasePointToSegmentPen
 
 def interpolate(a, b, t=.5):
     return a + t * (b - a)
+
 
 def interpolate_point(point_a, point_b, t=.5):
     return [interpolate(a, b, t) for a, b in zip(point_a, point_b)]
@@ -63,7 +52,7 @@ def rotate_point_around_axis(point, axis_coos, angle_degrees):
 
 def rotate_glyph(glyph, angle):
     for contour in glyph:
-        for point in contour:
+        for p, point in enumerate(contour):
             rotate_point_around_axis(point, (0, 0), angle)
 
 def rotate_segments(segments, angle):
@@ -98,31 +87,21 @@ def line_shape(output_glyph_contours, point_a, point_b, thickness, flip_end=Fals
     fourth_point = (x_a - x_offset, y_a - y_offset)
     point_objects = [None] * 4
 
-    point_objects[0] = Point(*first_point, type="line")
-    point_objects[1 if flip_end in {True, None} else 2] = Point(*third_point, type="line")
-    point_objects[2 if flip_end in {True, None} else 1] = Point(*second_point, type="line")
-    point_objects[3] = Point(*fourth_point, type="line")
+    point_objects[0] = Point(first_point, segmentType="line")
+    point_objects[1 if flip_end in {True, None} else 2] = Point(third_point, segmentType="line")
+    point_objects[2 if flip_end in {True, None} else 1] = Point(second_point, segmentType="line")
+    point_objects[3] = Point(fourth_point, segmentType="line")
 
     contour = Contour()
-    contour.points = point_objects
-    output_glyph_contours.appendContour(contour)
+    contour._points = point_objects
+    output_glyph_contours.append(contour)
     
-def contour_to_segments(contour):
-    segments = []
-    segment = []
-    for point in contour:
-        segment.append(point)
-        if point.type in ('line', 'curve', 'qcurve'):
-            segments.append(segment)
-            segment = []
-    return segments
 
-
-def get_pan_slices(glyph, step, shadow=False):
+def get_pan_slices(glyph, step):
     contour_points = []
-    for contour in glyph:
+    for contour in glyph._contours:
         contour_points.extend([(point.x, point.y) for point in contour])
-    bounds = glyph.getBounds()
+    bounds = glyph.bounds
     return_value = []
     if bounds is None:
         return return_value
@@ -132,7 +111,7 @@ def get_pan_slices(glyph, step, shadow=False):
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
-            segments = contour_to_segments(contour)
+            segments = contour.segments
             for s, segment in enumerate(segments):
                 last_point = segments[s-1][-1]
                 segment_points = [last_point, *segment]
@@ -151,37 +130,33 @@ def get_pan_slices(glyph, step, shadow=False):
 
         output_intersections_len = len(output_intersections)
         contour_points_len = len(contour_points)
+        if output_intersections_len % 2 == 0:
+            return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
 
-        if shadow:
-            try:
-                return_value.append((output_intersections[0], output_intersections[-1]))
-            except IndexError:
-                pass
         else:
-            if output_intersections_len % 2 == 0:
-                return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
-            else:
-                points_are_inside = []
-                for point_index in range(1, output_intersections_len):
-                    point_is_inside = False
-                    prev_point = output_intersections[point_index - 1]
-                    point = output_intersections[point_index]
-                    middle = interpolate_point(prev_point, point, .5)
-                    if point in contour_points:
-                        point_index = contour_points.index(point)
-                        if point in contour_points and (contour_points[point_index - 1] == prev_point or contour_points[(point_index + 1) % contour_points_len] == prev_point):
-                            point_is_inside = True
-                        else:
-                            point_is_inside = glyph.pointInside(middle)
+            points_are_inside = []
+            for point_index in range(1, output_intersections_len):
+                point_is_inside = False
+                prev_point = output_intersections[point_index - 1]
+                point = output_intersections[point_index]
+                middle = interpolate_point(prev_point, point, .5)
+                if point in contour_points:
+                    point_index = contour_points.index(point)
+                    if point in contour_points and (contour_points[point_index - 1] == prev_point or contour_points[(point_index + 1) % contour_points_len] == prev_point):
+                        point_is_inside = True
                     else:
                         point_is_inside = glyph.pointInside(middle)
-                    points_are_inside.append(point_is_inside)
-                    
-                if len(points_are_inside) == (output_intersections_len - 1):
-                    for segment in create_segments(output_intersections, points_are_inside):
-                        return_value.append((segment[0], segment[-1]))
                 else:
-                    raise NotImplementedError
+                    point_is_inside = glyph.pointInside(middle)
+                points_are_inside.append(point_is_inside)
+                
+            if len(points_are_inside) == (output_intersections_len - 1):
+                for segment in create_segments(output_intersections, points_are_inside):
+                    return_value.append((segment[0], segment[-1]))
+            else:
+                raise NotImplementedError
+                # print(output_intersections)
+                # return_value.append((output_intersections[0], output_intersections[-1]))
     return return_value
 
 
@@ -190,12 +165,12 @@ def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
     def shape_func(pt_from, pt_to, thickness, **kwargs):
         length = hypot(pt_to[1]-pt_from[1], pt_to[0]-pt_from[0])
         if length > min_length:
-            line_shape(output_glyph, pt_from, pt_to, thickness, flip_end, **kwargs)
+            line_shape(output_glyph._contours, pt_from, pt_to, thickness, flip_end, **kwargs)
 
     for from_point, to_point in slices:
         shape_func(from_point, to_point, thickness)
 
-def pan(input_font, glyph_names_to_process, scale_factor, shadow):
+def pan(input_font, glyph_names_to_process, scale_factor, min_length):
     font_20 = Font()
     font_80 = Font()
     font_20_flipped = Font()
@@ -210,16 +185,17 @@ def pan(input_font, glyph_names_to_process, scale_factor, shadow):
     for glyph_name in glyph_names_to_process:        
         glyph = input_font[glyph_name]
         flattened = BooleanGlyph()
-        flatten_pen = FlattenPen(flattened.getPen(), approximateSegmentLength=50*scale_factor)
+        flatten_pen = FlattenPen(flattened.getPen(), approximateSegmentLength=50)
         glyph.draw(flatten_pen)
         skia_union(flattened, glyph_removed_overlap.getPen())
+
         
         for angle in [0, 45, 90, 135]:
             for step in range(40, 100, 20):
                 output_glyph = Glyph()
                 glyph_removed_overlap.draw(output_glyph.getPen())
                 rotate_glyph(output_glyph, angle)
-                slices = get_pan_slices(output_glyph, int(step / 2 * scale_factor), shadow=shadow)
+                slices = get_pan_slices(output_glyph, int(step / 2 * scale_factor))
                 slices = rotate_segments(slices, -angle)
                 for half_circle_switch in [False, True]:
                     if half_circle_switch:
@@ -236,29 +212,39 @@ def pan(input_font, glyph_names_to_process, scale_factor, shadow):
                                 output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle) + "_step_" + str(step))
                             output_glyph.width = glyph.width
                             pan_glyph(
-                                output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices],
+                                output_glyph,
+                                [s[::-1 if half_circle_switch else 1] for s in slices],
                                 thickness if thickness != 100 else step * .75,
-                                min_length=step,
+                                min_length=min_length,
                                 flip_end=flip_end
                                 )
-        glyph_removed_overlap.contours = []
+        glyph_removed_overlap._contours = []
     designspace = make_designspace(masters, glyph_names_to_process)
     return compileVariableTTF(designspace, optimizeGvar=False)
 
 if __name__ == "__main__":
     import cProfile, pstats
+    from defcon.objects.base import BaseObject
     from datetime import datetime
     from pathlib import Path
 
-    PROFILE = True
+    BaseObject.addObserver = lambda *args, **kwargs: None
+    BaseObject.postNotification = lambda *args, **kwargs: None
+    BaseObject.removeObserver = lambda *args, **kwargs: None
+    BaseObject.beginSelfNotificationObservation = lambda *args, **kwargs: None
+    BaseObject.endSelfContourNotificationObservation = lambda *args, **kwargs: None
+    BaseObject.dirty = lambda : None
+    BaseObject.dispatcher = None
+
+    PROFILE = not True
 
     path = Path("/Users/jansindler/Desktop/font.ufo")
-    input_font = Font.open(str(path))
+    input_font = Font(str(path))
     if PROFILE:
         profiler = cProfile.Profile()
         profiler.enable()
     start = datetime.now()
-    pan(input_font, ["O", "B", "C", "D", "E"], scale_factor=2, min_length=0, shadow=True)
+    pan(input_font, ["A", "B", "C", "D", "E"], scale_factor=2, min_length=0)
     print((datetime.now() - start).total_seconds())
     if PROFILE:
         profiler.disable()

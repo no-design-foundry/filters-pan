@@ -1,5 +1,7 @@
 from fontTools.designspaceLib import DesignSpaceDocument, AxisDescriptor, SourceDescriptor, InstanceDescriptor, RuleDescriptor
 
+thickness_max = 100
+
 def make_designspace(masters, glyph_names):
     doc = DesignSpaceDocument()
 
@@ -26,7 +28,7 @@ def make_designspace(masters, glyph_names):
     axis = AxisDescriptor()
     axis.name="thickness"
     axis.minimum=20
-    axis.maximum=80
+    axis.maximum=thickness_max
     axis.default=20
     axis.tag="THCK"
     axis.labelNames={"en": "Thickness"}
@@ -69,11 +71,11 @@ def make_designspace(masters, glyph_names):
 
     source = SourceDescriptor()
     # source.path = "masters/1_False.ufoz"
-    source.font = masters[80][0]
+    source.font = masters[thickness_max][0]
     source.name = "pan.ufo"
     source.familyName = "Pan"
     source.styleName = "Pan"
-    source.location = dict(angle=0, step=40, thickness=80, flipped_end=0)
+    source.location = dict(angle=0, step=40, thickness=thickness_max, flipped_end=0)
     doc.addSource(source)
 
     source = SourceDescriptor()
@@ -85,11 +87,11 @@ def make_designspace(masters, glyph_names):
     doc.addSource(source)
 
     source = SourceDescriptor()
-    source.font = masters[80][1]
+    source.font = masters[thickness_max][1]
     source.name = "pan.ufo"
     source.familyName = "Pan"
     source.styleName = "Pan"
-    source.location = dict(angle=0, step=40, thickness=80, flipped_end=100)
+    source.location = dict(angle=0, step=40, thickness=thickness_max, flipped_end=100)
     doc.addSource(source)
 
     return doc
