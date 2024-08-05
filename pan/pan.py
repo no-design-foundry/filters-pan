@@ -128,7 +128,7 @@ def get_pan_slices(glyph, step, shadow=False):
         return return_value
 
     for i in range(0, abs(ceil(bounds[1] - bounds[3])) + step * 2, step):
-        line_y = -50 + ceil(bounds[1]/step)*step + i
+        line_y = -step + ceil(bounds[1]/step)*step + i
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
@@ -184,8 +184,6 @@ def get_pan_slices(glyph, step, shadow=False):
                     raise NotImplementedError
     return return_value
 
-
-
 def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
     def shape_func(pt_from, pt_to, thickness, **kwargs):
         length = hypot(pt_to[1]-pt_from[1], pt_to[0]-pt_from[0])
@@ -195,7 +193,7 @@ def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
     for from_point, to_point in slices:
         shape_func(from_point, to_point, thickness)
 
-def pan(input_font, glyph_names_to_process, scale_factor, shadow):
+def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_factor=1):
     font_20 = Font()
     font_80 = Font()
     font_20_flipped = Font()
@@ -207,6 +205,9 @@ def pan(input_font, glyph_names_to_process, scale_factor, shadow):
         100: [font_80, font_80_flipped]
     }
     glyph_removed_overlap = Glyph()
+    if glyph_names_to_process is None:
+        glyph_names_to_process = input_font.keys()
+
     for glyph_name in glyph_names_to_process:        
         glyph = input_font[glyph_name]
         flattened = BooleanGlyph()
@@ -215,54 +216,59 @@ def pan(input_font, glyph_names_to_process, scale_factor, shadow):
         skia_union(flattened, glyph_removed_overlap.getPen())
         
         for angle in [0, 45, 90, 135]:
-            for step in range(40, 100, 20):
-                output_glyph = Glyph()
-                glyph_removed_overlap.draw(output_glyph.getPen())
-                rotate_glyph(output_glyph, angle)
-                slices = get_pan_slices(output_glyph, int(step / 2 * scale_factor), shadow=shadow)
-                slices = rotate_segments(slices, -angle)
-                for half_circle_switch in [False, True]:
-                    if half_circle_switch:
-                        output_angle = angle + 180
-                    else:
-                        output_angle = angle
-                    for thickness in masters.keys():
-                        for flip_end in [False, True]:
-                            font = masters[thickness][flip_end]
-                            if output_angle == 0 and step == 40:
-                                output_glyph = font.newGlyph(glyph_name)
-                                output_glyph.unicodes = glyph.unicodes
-                            else:
-                                output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle) + "_step_" + str(step))
-                            output_glyph.width = glyph.width
-                            pan_glyph(
-                                output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices],
-                                thickness if thickness != 100 else step * .75,
-                                min_length=step,
-                                flip_end=flip_end
-                                )
+            output_glyph = Glyph()
+            glyph_removed_overlap.draw(output_glyph.getPen())
+            rotate_glyph(output_glyph, angle)
+            slices = get_pan_slices(output_glyph, int(step / 2), shadow=shadow)
+            slices = rotate_segments(slices, -angle)
+            for half_circle_switch in [False, True]:
+                if half_circle_switch:
+                    output_angle = angle + 180
+                else:
+                    output_angle = angle
+                for thickness in masters.keys():
+                    for flip_end in [False, True]:
+                        font = masters[thickness][flip_end]
+                        if output_angle == 0:
+                            output_glyph = font.newGlyph(glyph_name)
+                            output_glyph.unicodes = glyph.unicodes
+                        else:
+                            output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle))
+                        output_glyph.width = glyph.width
+                        pan_glyph(
+                            output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices],
+                            thickness if thickness != 100 else step * .75,
+                            min_length=step,
+                            flip_end=flip_end
+                            )
         glyph_removed_overlap.contours = []
     designspace = make_designspace(masters, glyph_names_to_process)
     return compileVariableTTF(designspace, optimizeGvar=False)
 
-if __name__ == "__main__":
-    import cProfile, pstats
-    from datetime import datetime
+
+def main():
+    import argparse
     from pathlib import Path
+    
+    parser = argparse.ArgumentParser(description="Apply Pan filter onto UFO font.")
+    parser.add_argument("input_file", type=Path, help="Path to the input font file.")
+    parser.add_argument("step", type=int, help="Step")
+    parser.add_argument("--output_dir", "-o", type=Path, help="Path to the output file. If not provided, the output will be saved in the same directory as the input file.")
+    parser.add_argument("--glyph_names", "-g", type=str, nargs="+", help="List of glyph names to process. If not provided, all glyphs will be processed.")
 
-    PROFILE = True
+    args = parser.parse_args()
 
-    path = Path("/Users/jansindler/Desktop/font.ufo")
-    input_font = Font.open(str(path))
-    if PROFILE:
-        profiler = cProfile.Profile()
-        profiler.enable()
-    start = datetime.now()
-    pan(input_font, ["O", "B", "C", "D", "E"], scale_factor=2, min_length=0, shadow=True)
-    print((datetime.now() - start).total_seconds())
-    if PROFILE:
-        profiler.disable()
-        # stats = pstats.Stats(profiler).strip_dirs().sort_stats('tottime')  # sort by cumulative time spent in function
-        stats = pstats.Stats(profiler).sort_stats('tottime')  # sort by cumulative time spent in function
-        stats.print_stats(50)  
-        
+    input_file = args.input_file
+    step = args.step
+    output_dir = args.output_dir
+
+    ufo = Font.open(input_file)
+    glyph_names = args.glyph_names if args.glyph_names else ufo.keys()
+
+    pan_output = pan(ufo, args.step, shadow=False, glyph_names_to_process=glyph_names)
+    output_file_name = f"{input_file.stem}_{step}_Pan.ttf"
+    pan_output.save(output_dir/output_file_name if output_dir else input_file.parent/output_file_name)
+
+
+if __name__ == "__main__":
+    main()

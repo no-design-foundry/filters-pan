@@ -16,16 +16,6 @@ def make_designspace(masters, glyph_names):
     doc.addAxis(axis)
 
     axis = AxisDescriptor()
-    axis.name="step"
-    axis.minimum=40
-    axis.maximum=100
-    axis.default=40
-    axis.tag="STEP"
-    axis.labelNames={"en": "Step"}
-    axis.axisOrdering=1
-    doc.addAxis(axis)
-
-    axis = AxisDescriptor()
     axis.name="thickness"
     axis.minimum=20
     axis.maximum=thickness_max
@@ -46,16 +36,15 @@ def make_designspace(masters, glyph_names):
     doc.addAxis(axis)
 
     for angle in range(0, 360, 45):
-        for step in range(40, 100, 20):
-            if angle == 0 and step == 40:
-                pass
-            else:
-                rule = RuleDescriptor()
-                rule.name = f"angle_{angle}_{step}"
-                rule.conditionSets.append([dict(name="angle", minimum=angle, maximum=angle+45), dict(name="step", minimum=step, maximum=step + 20)])
-                for glyph_name in glyph_names:
-                        rule.subs.append((glyph_name, f"{glyph_name}_angle_{angle}_step_{step}"))
-                doc.addRule(rule)
+        if angle == 0:
+            pass
+        else:
+            rule = RuleDescriptor()
+            rule.name = f"angle_{angle}"
+            rule.conditionSets.append([dict(name="angle", minimum=angle, maximum=angle+45)])
+            for glyph_name in glyph_names:
+                    rule.subs.append((glyph_name, f"{glyph_name}_angle_{angle}"))
+            doc.addRule(rule)
 
     source = SourceDescriptor()
     # source.path = "masters/0_False.ufoz"
