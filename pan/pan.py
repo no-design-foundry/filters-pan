@@ -118,7 +118,7 @@ def contour_to_segments(contour):
     return segments
 
 
-def get_pan_slices(glyph, step, shadow=False):
+def get_pan_slices(glyph, step, shadow=False, correction_offset=.001):
     contour_points = []
     for contour in glyph:
         contour_points.extend([(point.x, point.y) for point in contour])
@@ -128,7 +128,7 @@ def get_pan_slices(glyph, step, shadow=False):
         return return_value
 
     for i in range(0, abs(ceil(bounds[1] - bounds[3])) + step * 2, step):
-        line_y = -step + ceil(bounds[1]/step)*step + i
+        line_y = -step + ceil(bounds[1]/step)*step + i + correction_offset
         line_points = ((bounds[0] - 10, line_y), (bounds[2]+10, line_y))
         output_intersections = set()
         for contour in glyph:
@@ -147,41 +147,13 @@ def get_pan_slices(glyph, step, shadow=False):
                         output_intersections.add(tuple(map(lambda x:round(x, 3), intersection.pt)))
 
         output_intersections = sorted(output_intersections, key=lambda x:x[0])
-        points_are_inside = []
-
         output_intersections_len = len(output_intersections)
-        contour_points_len = len(contour_points)
 
         if shadow:
-            try:
-                return_value.append((output_intersections[0], output_intersections[-1]))
-            except IndexError:
-                pass
+            return_value.append((output_intersections[0], output_intersections[-1]))
         else:
-            if output_intersections_len % 2 == 0:
-                return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
-            else:
-                points_are_inside = []
-                for point_index in range(1, output_intersections_len):
-                    point_is_inside = False
-                    prev_point = output_intersections[point_index - 1]
-                    point = output_intersections[point_index]
-                    middle = interpolate_point(prev_point, point, .5)
-                    if point in contour_points:
-                        point_index = contour_points.index(point)
-                        if point in contour_points and (contour_points[point_index - 1] == prev_point or contour_points[(point_index + 1) % contour_points_len] == prev_point):
-                            point_is_inside = True
-                        else:
-                            point_is_inside = glyph.pointInside(middle)
-                    else:
-                        point_is_inside = glyph.pointInside(middle)
-                    points_are_inside.append(point_is_inside)
-                    
-                if len(points_are_inside) == (output_intersections_len - 1):
-                    for segment in create_segments(output_intersections, points_are_inside):
-                        return_value.append((segment[0], segment[-1]))
-                else:
-                    raise NotImplementedError
+            return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
+    
     return return_value
 
 def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
