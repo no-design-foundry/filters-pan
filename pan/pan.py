@@ -216,6 +216,7 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
                             min_length=step,
                             flip_end=flip_end
                             )
+                        output_glyph.components = glyph.components
         glyph_removed_overlap.contours = []
     designspace = make_designspace(masters, glyph_names_to_process)
     return compileVariableTTF(designspace, optimizeGvar=False)
