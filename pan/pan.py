@@ -149,11 +149,14 @@ def get_pan_slices(glyph, step, shadow=False, correction_offset=.001):
         output_intersections = sorted(output_intersections, key=lambda x:x[0])
         output_intersections_len = len(output_intersections)
 
-        if shadow:
-            return_value.append((output_intersections[0], output_intersections[-1]))
-        else:
-            return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
-    
+        try:
+            if shadow:
+                return_value.append((output_intersections[0], output_intersections[-1]))
+            else:
+                return_value.extend([(output_intersections[i], output_intersections[i+1]) for i in range(0, output_intersections_len, 2)])
+        except IndexError:
+            pass
+
     return return_value
 
 def pan_glyph(output_glyph, slices, thickness, min_length=0, flip_end=False):
