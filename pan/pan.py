@@ -183,12 +183,15 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
     if glyph_names_to_process is None:
         glyph_names_to_process = input_font.keys()
 
+    classes = {}
+
     for glyph_name in glyph_names_to_process:        
         glyph = input_font[glyph_name]
         flattened = BooleanGlyph()
         flatten_pen = FlattenPen(flattened.getPen(), approximateSegmentLength=50*scale_factor)
         glyph.draw(flatten_pen)
         skia_union(flattened, glyph_removed_overlap.getPen())
+        classes[glyph_name] = []
         
         for angle in [0, 45, 90, 135]:
             output_glyph = Glyph()
@@ -210,6 +213,7 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
                         else:
                             output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle))
                         output_glyph.width = glyph.width
+                        classes[glyph_name].append(output_glyph.name)
                         pan_glyph(
                             output_glyph, [s[::-1 if half_circle_switch else 1] for s in slices],
                             thickness if thickness != 100 else step * .75,
@@ -218,7 +222,18 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
                             )
                         output_glyph.components = glyph.components
         glyph_removed_overlap.contours = []
+    
+
     designspace = make_designspace(masters, glyph_names_to_process)
+    if len(input_font.kerning.keys()):
+        kerning = {(f"public.kern1.{k[0]}",f"public.kern2.{k[1]}"):v for k,v in input_font.kerning.items()}
+        for source in designspace.sources:
+            source.font.kerning.update(kerning)
+            if source.copyFeatures:
+                for group_name, members in classes.items():
+                    source.font.groups[f"public.kern1.{group_name}"] = members
+                    source.font.groups[f"public.kern2.{group_name}"] = members
+
     return compileVariableTTF(designspace, optimizeGvar=False)
 
 
