@@ -1,4 +1,3 @@
-# from defcon import Glyph, Point, Contour
 from booleanOperations.booleanGlyph import BooleanGlyph
 from fontTools.misc.bezierTools import segmentSegmentIntersections
 from math import hypot, radians, cos, sin, atan2, pi, ceil
