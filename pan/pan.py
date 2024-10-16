@@ -13,6 +13,7 @@ from ufoLib2.objects.contour import Contour
 from ufoLib2.objects.glyph import Glyph
 from ufoLib2.objects.point import Point
 from ufoLib2.objects.font import Font
+from ufoLib2.objects.component import Component
 
 from fontTools.pens.pointInsidePen import PointInsidePen
 
@@ -206,11 +207,13 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
                 for thickness in masters.keys():
                     for flip_end in [False, True]:
                         font = masters[thickness][flip_end]
+                        angle_suffix = None
                         if output_angle == 0:
                             output_glyph = font.newGlyph(glyph_name)
                             output_glyph.unicodes = glyph.unicodes
                         else:
-                            output_glyph = font.newGlyph(glyph_name + "_angle_" + str(output_angle))
+                            angle_suffix = f"_angle_{output_angle}"
+                            output_glyph = font.newGlyph(glyph_name + angle_suffix)
                         output_glyph.width = glyph.width
                         classes[glyph_name].append(output_glyph.name)
                         pan_glyph(
@@ -219,7 +222,13 @@ def pan(input_font, step, glyph_names_to_process=None, shadow=False, scale_facto
                             min_length=step,
                             flip_end=flip_end
                             )
-                        output_glyph.components = glyph.components
+                        if angle_suffix:
+                            renamed_components = []
+                            for component in glyph.components:
+                                renamed_components.append(Component(component.baseGlyph + angle_suffix, component.transformation))
+                            output_glyph.components = renamed_components   
+                        else:
+                            output_glyph.components = glyph.components
         glyph_removed_overlap.contours = []
     
 
